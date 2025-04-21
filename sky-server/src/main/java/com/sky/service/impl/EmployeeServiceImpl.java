@@ -1,16 +1,20 @@
 package com.sky.service.impl;
 
+import com.github.pagehelper.Page;
+import com.github.pagehelper.PageHelper;
 import com.sky.constant.MessageConstant;
 import com.sky.constant.PasswordConstant;
 import com.sky.constant.StatusConstant;
 import com.sky.context.BaseContext;
 import com.sky.dto.EmployeeDTO;
 import com.sky.dto.EmployeeLoginDTO;
+import com.sky.dto.EmployeePageQueryDTO;
 import com.sky.entity.Employee;
 import com.sky.exception.AccountLockedException;
 import com.sky.exception.AccountNotFoundException;
 import com.sky.exception.PasswordErrorException;
 import com.sky.mapper.EmployeeMapper;
+import com.sky.result.PageResult;
 import com.sky.service.EmployeeService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +22,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.DigestUtils;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 public class EmployeeServiceImpl implements EmployeeService {
@@ -78,5 +83,18 @@ public class EmployeeServiceImpl implements EmployeeService {
         employee.setUpdateUser(BaseContext.getCurrentId());
         //调用mapper层执行sql语句实现数据插入
         employeeMapper.insert(employee);
+    }
+
+
+    @Override
+    public PageResult pageQuery(EmployeePageQueryDTO employeePageQueryDTO) {//请求参数中包含页码page、每页记录数pageSize
+        //开始分页查询[将请求参数中的页码、每页记录数传入]
+        // PageHelper插件底层是基于MyBatis的拦截器实现的。首先利用ThreadLocal来存储、传递分页参数(page\pageSize)，
+        // 然后在MyBatis拦截器中获取到分页参数，在后面执行的sql语句中进行动态拼接，将limit关键字拼接进去，实现分页查询。
+        PageHelper.startPage(employeePageQueryDTO.getPage(), employeePageQueryDTO.getPageSize());
+        Page<Employee> page = employeeMapper.pageQuery(employeePageQueryDTO);//page是一个ArrayList，里面封装了分页查询的结果
+        long total = page.getTotal();//总记录数
+        List<Employee> records = page.getResult();//查询结果
+        return new PageResult(total, records);//将分页查询的结果封装到PageResult中
     }
 }

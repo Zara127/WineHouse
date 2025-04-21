@@ -2,4 +2,17 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.sky.mapper.EmployeeMapper">
+<!--    &#45;&#45;动态sql，使用where标签，可以在拼接时自动去除多余的and或or-->
+<!--    &#45;&#45;name不是必须传入的查询参数，所以用if实现动态sql；name使用模糊查询-->
+<!--    &#45;&#45;         不需要再用limit关键字实现分页，-->
+<!--    &#45;&#45;         在业务逻辑处理时使用了mybatis提供的pagehelper插件，可以根据传入的page、pageSize参数自动实现分页-->
+    <select id="pageQuery" resultType="com.sky.entity.Employee">
+        select * from employee
+        <where>
+            <if test="name != null and name != ''">
+                and name like concat('%',#{name},'%')
+            </if>
+        </where>
+        order by create_time desc
+    </select>
 </mapper>
