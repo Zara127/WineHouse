@@ -33,4 +33,22 @@ public interface EmployeeMapper {
      */
     //需要使用到动态sql，所以不在这里使用注解的方式，而是在EmployeeMapper.xml映射文件中
     Page<Employee> pageQuery(EmployeePageQueryDTO employeePageQueryDTO);
+
+    /**
+     * 启用禁用员工
+     * @param employee
+     * @return
+     */
+    //使用动态sql，使update方法更加通用，不只是为修改status属性用 <if>判断是否有其他参数传入，有则<set>修改
+    // 在EmployeeMapper.xml文件中写sql
+//    修改类均可使用该方法
+    void update(Employee employee);
+
+    /**
+     * 根据id查询回显员工信息
+     * @param id
+     * @return
+     */
+    @Select("select * from employee where id = #{id}")
+    Employee getById(Long id);
 }

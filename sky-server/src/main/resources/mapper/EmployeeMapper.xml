@@ -2,7 +2,8 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.sky.mapper.EmployeeMapper">
-<!--    &#45;&#45;动态sql，使用where标签，可以在拼接时自动去除多余的and或or-->
+
+    <!--    &#45;&#45;动态sql，使用where标签，可以在拼接时自动去除多余的and或or-->
 <!--    &#45;&#45;name不是必须传入的查询参数，所以用if实现动态sql；name使用模糊查询-->
 <!--    &#45;&#45;         不需要再用limit关键字实现分页，-->
 <!--    &#45;&#45;         在业务逻辑处理时使用了mybatis提供的pagehelper插件，可以根据传入的page、pageSize参数自动实现分页-->
@@ -15,4 +16,31 @@
         </where>
         order by create_time desc
     </select>
+
+
+<!--    使用动态sql将update方法写的更加通用，只要是修改类均可使用，可以只改status，也可以在有其他参数传入时修改其他属性&ndash;&gt;-->
+<!--    <set>标签可以自动去除多余的, <if>标签判断是否有其他参数传入/需要修改-->
+<!--    不要漏掉where条件-->
+    <update id="update" parameterType="Employee">
+        update employee
+        <set>
+            <if test="name != null">
+                name = #{name},
+            </if>
+            <if test="sex != null">
+                sex = #{sex},
+            </if>
+            <if test="idNumber != null">
+                id_number = #{idNumber},
+            </if>
+            <if test="phone != null">
+                phone = #{phone},
+            </if>
+            <if test="status != null">
+                status = #{status},
+            </if>
+        </set>
+        where id = #{id}
+
+    </update>
 </mapper>

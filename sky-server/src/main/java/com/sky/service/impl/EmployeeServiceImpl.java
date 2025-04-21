@@ -65,6 +65,10 @@ public class EmployeeServiceImpl implements EmployeeService {
         return employee;
     }
 
+    /**
+     * 新增员工
+     * @param employeeDTO
+     */
     public void save(EmployeeDTO employeeDTO) {
         //将DTO对象转为实体对象，传给mapper层
         Employee employee = new Employee();
@@ -85,7 +89,10 @@ public class EmployeeServiceImpl implements EmployeeService {
         employeeMapper.insert(employee);
     }
 
-
+    /**
+     * 员工分页查询
+     * @param employeePageQueryDTO
+     */
     @Override
     public PageResult pageQuery(EmployeePageQueryDTO employeePageQueryDTO) {//请求参数中包含页码page、每页记录数pageSize
         //开始分页查询[将请求参数中的页码、每页记录数传入]
@@ -97,4 +104,54 @@ public class EmployeeServiceImpl implements EmployeeService {
         List<Employee> records = page.getResult();//查询结果
         return new PageResult(total, records);//将分页查询的结果封装到PageResult中
     }
-}
+
+
+    /**
+     * 启用禁用员工
+     * @param status
+     * @param id
+     * @return
+     */
+    public void startOrStop(Integer status, Long id) {
+        //正常是根据id使用update更新status即可，但为了语句的通用性，即使用update方法可以更改更多属性，
+        //将mapper层的update传入参数由status、id更改为整个employee实体类对象
+
+        //创建实体类对象 方式1
+//        Employee employee = new Employee();
+//        employee.setStatus(status);
+//        employee.setId(id);
+
+        //创建实体类对象 方式2
+        Employee employee = Employee.builder().status(status).id(id).build();
+
+        employeeMapper.update(employee);
+    }
+
+
+
+    /**
+     * 根据id查询回显员工信息
+     * @param id
+     * @return
+     */
+    public Employee getById(Long id){
+        Employee employee = employeeMapper.getById(id);
+        employee.setPassword("******");//进一步加强安全性
+        return employee;
+    }
+
+
+    /**
+     * 编辑员工信息
+     * @param employeeDTO
+     * @return
+     */
+    public void update(EmployeeDTO employeeDTO) {
+
+        Employee employee = new Employee();
+        BeanUtils.copyProperties(employeeDTO, employee);
+        employee.setUpdateTime(LocalDateTime.now());
+        employee.setUpdateUser(BaseContext.getCurrentId());//ThreadLocal
+        employeeMapper.update(employee);
+    }
+    }
