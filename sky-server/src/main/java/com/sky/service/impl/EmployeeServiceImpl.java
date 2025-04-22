@@ -79,12 +79,13 @@ public class EmployeeServiceImpl implements EmployeeService {
         employee.setPassword(DigestUtils.md5DigestAsHex(PasswordConstant.DEFAULT_PASSWORD.getBytes()));
         //设置账号状态
         employee.setStatus(StatusConstant.ENABLE);
-        //设置创建时间、更新时间
-        employee.setCreateTime(LocalDateTime.now());
-        employee.setUpdateTime(LocalDateTime.now());
-        // Add  设置当前记录创建人id和修改人id【通过利用ThreadLocal在校验JWT令牌处获取】
-        employee.setCreateUser(BaseContext.getCurrentId());
-        employee.setUpdateUser(BaseContext.getCurrentId());
+//        [AOP实现公共字段自动填充]
+//        //设置创建时间、更新时间
+//        employee.setCreateTime(LocalDateTime.now());
+//        employee.setUpdateTime(LocalDateTime.now());
+//        // Add  设置当前记录创建人id和修改人id【通过利用ThreadLocal在校验JWT令牌处获取】
+//        employee.setCreateUser(BaseContext.getCurrentId());
+//        employee.setUpdateUser(BaseContext.getCurrentId());
         //调用mapper层执行sql语句实现数据插入
         employeeMapper.insert(employee);
     }
@@ -150,8 +151,9 @@ public class EmployeeServiceImpl implements EmployeeService {
 
         Employee employee = new Employee();
         BeanUtils.copyProperties(employeeDTO, employee);
-        employee.setUpdateTime(LocalDateTime.now());
-        employee.setUpdateUser(BaseContext.getCurrentId());//ThreadLocal
+//        [AOP实现公共字段自动填充]
+//        employee.setUpdateTime(LocalDateTime.now());
+//        employee.setUpdateUser(BaseContext.getCurrentId());//ThreadLocal
         employeeMapper.update(employee);
     }
     }
