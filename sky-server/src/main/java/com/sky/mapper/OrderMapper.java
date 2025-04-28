@@ -60,4 +60,23 @@ public interface OrderMapper {
     List<Orders> getByStatusAndOrderTime(Integer status, LocalDateTime orderTime);
 
 
+    /**
+     * 根据动态条件统计营业额数据
+     * @param map
+     */
+    Double sumByMap(Map map);
+
+
+    /**
+     * 根据动态条件统计订单数量
+     * @param map
+     */
+    Integer countByMap(Map map);
+
+    /**
+     * 统计指定时间内的销售top10
+     * @param begin
+     * @param end
+     */
+    List<GoodsSalesDTO> getSalesTop10(LocalDateTime begin, LocalDateTime end);
 }
